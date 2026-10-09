@@ -1,24 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
-
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
-export const Route = createFileRoute("/")({
-  component: Index,
-});
-
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
-function Index() {
-  return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
-  );
-}
+import { createFileRoute, Link } from '@tanstack/react-router';
+import { ArrowRight, ArrowUpRight, ArrowDown, ShieldCheck } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { TrustBand, ProductCard, AboutSection, ServiceSection } from '@/components/site';
+import { factory, products, pageHead } from '@/lib/site-data';
+export const Route=createFileRoute('/')({head:()=>pageHead('Bracon — Wires & Cables, Made in Nigeria','Tested, Trusted and Durable. Discover Bracon’s wires, cables, custom designs and nationwide distribution network.'),component:Home});
+function Home() { return <main><section className="hero"><img className="hero-image" src={factory} alt="Heavy-duty power cables on wooden reels in a cable manufacturing facility" width={1920} height={1024} fetchPriority="high"/><div className="site-container fade-in"><div className="eyebrow">NIGERIAN EXPERTISE. LASTING CONNECTIONS.</div><h1>Bracon Wire & Cable.<br/>Powering today.<br/><span>Connecting tomorrow.</span></h1><p className="hero-copy">Reliable wires and cables for the homes, industries and infrastructure that move Nigeria forward.</p><div className="hero-actions"><Button size="lg" asChild><Link to="/products">Explore our products <ArrowUpRight/></Link></Button><Button variant="heroOutline" size="lg" asChild><Link to="/quote">Talk to our experts <ArrowRight/></Link></Button></div></div><div className="hero-foot"><div className="site-container"><div className="hero-founded"><ShieldCheck size={17}/><span>TESTED. TRUSTED. DURABLE. &nbsp; SINCE 1998.</span></div><div className="hero-pagination" aria-hidden="true"><i/><i/><i/></div><div className="hero-scroll">SCROLL TO EXPLORE <ArrowDown size={14}/></div></div></div></section><TrustBand/><section className="section architectural"><div className="site-container"><div className="section-heading"><div><div className="eyebrow">THE BRACON PRODUCT RANGE</div><h2 className="section-title">Every connection starts<br/>with the right cable.</h2></div><Button variant="outline" asChild><Link to="/products">View all products <ArrowUpRight/></Link></Button></div><div className="product-grid">{products.slice(0,3).map(p=><ProductCard key={p.slug} product={p}/>)}</div></div></section><AboutSection/><ServiceSection/></main>; }
