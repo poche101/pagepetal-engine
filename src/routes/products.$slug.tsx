@@ -1,0 +1,7 @@
+import { createFileRoute, Link, notFound } from '@tanstack/react-router';
+import { ArrowUpRight } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { PageBanner } from '@/components/site';
+import { products, pageHead } from '@/lib/site-data';
+export const Route=createFileRoute('/products/$slug')({loader:({params})=>{const p=products.find(p=>p.slug===params.slug);if(!p)throw notFound();return p;},head:({loaderData})=>pageHead(loaderData?.name||'Product not found',loaderData?.description||'Explore the Bracon product catalogue.'),component:Product});
+function Product(){const p=Route.useLoaderData();return <main><PageBanner title={p.name} description="Bracon wires are considered reliable and durable." label={p.category}/><section className="section"><div className="site-container product-detail"><img src={p.image} alt={p.name} width={1024} height={768}/><div><div className="eyebrow">PRODUCT SPECIFICATION</div><h2 className="section-title">{p.spec}</h2><p className="section-copy">{p.description}</p>{p.sizes.length>0&&<table className="spec-table"><thead><tr><th>Conductor size (mm²)</th><th>Product</th></tr></thead><tbody>{p.sizes.map(size=><tr key={size}><td>{size.toFixed(1)}</td><td>{p.slug==='earth-copper-wires'?'Copper conductor':'1 Core'}</td></tr>)}</tbody></table>}<p className="about-detail">{p.note}</p><Button asChild><Link to="/quote">Request a quote <ArrowUpRight/></Link></Button></div></div></section></main>;}

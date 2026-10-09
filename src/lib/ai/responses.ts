@@ -1,5 +1,5 @@
 import { createOpenAI } from "@ai-sdk/openai";
-import { streamText, type ModelMessage } from "ai";
+import { streamText, type ModelMessage, type UIMessage } from "ai";
 
 import {
   createLovableAiGatewayRunIdFetch,
@@ -44,6 +44,8 @@ export function createResponsesCall(
   });
   return {
     result,
+    responseWithHistory: (messages: UIMessage[], save: (messages: UIMessage[]) => Promise<void>, block: (message: string) => Promise<void>) =>
+      withLovableAiGatewayRunIdHeader(result.toUIMessageStreamResponse({ originalMessages: messages, sendReasoning: true, onFinish: async ({ messages }) => { await save(messages); }, onError: (error) => { const e = error as { statusCode?: number; message?: string; responseBody?: string }; let message = e.message || "The assistant is unavailable. Please contact our team."; try { const b = JSON.parse(e.responseBody || "{}"); message = b.error?.message || b.message || message; } catch { /* preserve safe message */ } if (e.statusCode === 402 || e.statusCode === 403) void block(message); return message; } }), runIdFetch),
     response: () =>
       withLovableAiGatewayRunIdHeader(result.toUIMessageStreamResponse({ sendReasoning: true }), runIdFetch),
   };
