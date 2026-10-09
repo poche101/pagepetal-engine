@@ -1,5 +1,13 @@
 {
   "version": "7",
   "dialect": "postgresql",
-  "entries": []
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1791587683944,
+      "tag": "0000_bracon_website",
+      "breakpoints": true
+    }
+  ]
 }
