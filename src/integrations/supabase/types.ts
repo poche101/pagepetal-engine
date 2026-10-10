@@ -179,6 +179,7 @@ export type Database = {
         Args: { _key: string; _limit: number; _seconds: number }
         Returns: boolean
       }
+      claim_first_admin: { Args: never; Returns: boolean }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
