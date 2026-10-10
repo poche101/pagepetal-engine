@@ -1,6 +1,5 @@
-# Bracon website
-- [ ] Public website, product catalogue and supplied company/service content
-- [ ] Persisted quote, contact and distributor enquiries
-- [ ] Grounded single-conversation assistant and stored history
-- [ ] Administrator content and lead management
-- [ ] Verify desktop/mobile, forms, assistant and page metadata
+# Roadmap
+- [x] Fix preview errors (reasoning, shimmer, site, about)
+- [x] Admin sign-in + dashboard (catalogue, enquiries, assistant chats)
+- [ ] Enquiry forms reach Bracon + visitor confirmation (owner email needs verified domain)
+- [ ] Mobile menu slides down from top
