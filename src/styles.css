@@ -75,7 +75,7 @@
 .section-heading { display:flex; justify-content:space-between; align-items:end; gap:30px; margin-bottom:33px; }
 .section-title { font-size:36px; line-height:1.22; font-weight:750; margin-top:16px; }
 .section-copy { max-width:390px; font-size:12px; line-height:1.9; color:var(--muted-foreground); margin-top:16px; }
-.architectural { background-color:var(--background); background-image:linear-gradient(var(--secondary) 1px,transparent 1px),linear-gradient(90deg,var(--secondary) 1px,transparent 1px); background-size:90px 90px; }
+.architectural { background-color:var(--background); background-image:linear-gradient(oklch(0.997 0 0 / .93),oklch(0.997 0 0 / .96)),url("./assets/copper-cable.jpg"); background-size:cover; background-position:center; }
 .product-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:24px; }
 .product-card { border:1px solid var(--border); border-radius:6px; background:var(--background); overflow:hidden; transition:transform .25s,box-shadow .25s; }
 .product-card:hover { transform:translateY(-5px); box-shadow:var(--shadow-panel); }
