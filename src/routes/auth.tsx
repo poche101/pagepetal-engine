@@ -36,12 +36,14 @@ function AuthPage() {
       setBusy(false);
       if (error) return toast.error(error.message);
       navigate({ to: '/admin' });
+      return;
     } else {
       const { error } = await supabase.auth.signUp({ email, password, options: { emailRedirectTo: `${window.location.origin}/admin` } });
       setBusy(false);
       if (error) return toast.error(error.message);
       toast.success('Check your email to confirm your account, then sign in.');
       setMode('in');
+      return;
     }
   }
 
