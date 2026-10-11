@@ -51,10 +51,13 @@ function Admin() {
           <Button variant="outline" onClick={signOut}>Sign out</Button>
         </div>
         <Tabs defaultValue="leads">
-          <TabsList><TabsTrigger value="leads">Enquiries ({data.leads.length})</TabsTrigger><TabsTrigger value="catalogue">Catalogue</TabsTrigger><TabsTrigger value="chats">Assistant ({data.chats.length})</TabsTrigger></TabsList>
+          <TabsList><TabsTrigger value="leads">Enquiries ({data.leads.length})</TabsTrigger><TabsTrigger value="pages">Pages</TabsTrigger><TabsTrigger value="catalogue">Catalogue</TabsTrigger><TabsTrigger value="chats">Assistant ({data.chats.length})</TabsTrigger></TabsList>
           <TabsContent value="leads" className="mt-6 space-y-4">
             {data.leads.length === 0 && <p className="text-muted-foreground">No enquiries yet.</p>}
             {data.leads.map((l) => <Lead key={l.id} lead={l} />)}
+          </TabsContent>
+          <TabsContent value="pages" className="mt-6 space-y-4">
+            {PAGES.map((pg) => <PageEditor key={pg.key} pageKey={pg.key} label={pg.label} row={data.content.find((c) => c.key === pg.key)} />)}
           </TabsContent>
           <TabsContent value="catalogue" className="mt-6 space-y-4">
             {products.map((p) => <ProductEditor key={p.slug} slug={p.slug} name={p.name} description={p.description} row={data.content.find((c) => c.key === `product:${p.slug}`)} />)}
@@ -114,6 +117,28 @@ function ProductEditor({ slug, name, description, row }: { slug: string; name: s
         <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={hidden} onChange={(e) => setHidden(e.target.checked)} /> Hide from website</label>
         <Button onClick={async () => { try { await save({ data: { key: `product:${slug}`, title, body, category: hidden ? 'hidden' : 'product', published: true } }); toast.success('Product updated'); qc.invalidateQueries(); } catch (e) { toast.error((e as Error).message); } }}>Save product</Button>
       </div>
+    </div>
+  );
+}
+
+const PAGES = [
+  { key: 'about', label: 'About page' },
+  { key: 'services', label: 'Services page' },
+  { key: 'contact', label: 'Contact page' },
+  { key: 'quality', label: 'Quality page' },
+];
+
+function PageEditor({ pageKey, label, row }: { pageKey: string; label: string; row?: { title: string; body: string } | undefined }) {
+  const save = useServerFn(saveContent);
+  const qc = useQueryClient();
+  const [title, setTitle] = useState(row?.title ?? '');
+  const [body, setBody] = useState(row?.body ?? '');
+  return (
+    <div className="rounded-md border bg-card p-5 space-y-3">
+      <div className="eyebrow">{label}</div>
+      <Input placeholder="Heading (leave empty to keep the current one)" value={title} onChange={(e) => setTitle(e.target.value)} />
+      <Textarea rows={6} placeholder="Page text (leave empty to keep the current text)" value={body} onChange={(e) => setBody(e.target.value)} />
+      <div className="flex justify-end"><Button onClick={async () => { try { await save({ data: { key: pageKey, title: title || label, body, category: 'page', published: true } }); toast.success('Page updated'); qc.invalidateQueries(); } catch (e) { toast.error((e as Error).message); } }}>Save page</Button></div>
     </div>
   );
 }
