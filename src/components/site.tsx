@@ -1,3 +1,4 @@
+import logo from "@/assets/bracon-logo.jpg.asset.json";
 import { Link } from '@tanstack/react-router';
 import { useState } from 'react';
 import { ArrowUpRight, ArrowRight, Menu, Phone, Mail, MapPin, ShieldCheck, Factory, Truck, Cable, Settings2, RotateCw } from 'lucide-react';
