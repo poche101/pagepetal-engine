@@ -9,7 +9,8 @@ import { products } from '@/lib/site-data';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { LayoutDashboard, Inbox, FileText, Package, MessageSquare, Bell, CheckCircle2, ExternalLink, LogOut } from 'lucide-react';
+import { BrandMark } from '@/components/site';
 
 export const Route = createFileRoute('/_authenticated/admin')({
   head: () => ({
@@ -40,47 +41,91 @@ function Admin() {
     await qc.cancelQueries(); qc.clear(); await supabase.auth.signOut(); navigate({ to: '/auth', replace: true });
   }
 
+  const [tab, setTab] = useState('overview');
   if (isLoading || !data) return <main className="section"><div className="site-container">Loading dashboard…</div></main>;
   if (!data.allowed) return <main className="section"><div className="site-container max-w-lg"><h1 className="section-title">Access pending</h1><p className="section-copy">Your account is signed in but hasn't been given staff access yet. Ask an existing administrator to grant it.</p><Button variant="outline" onClick={signOut}>Sign out</Button></div></main>;
 
+  const newLeads = data.leads.filter((l) => l.status === 'New').length;
+  const converted = data.leads.filter((l) => l.status === 'Converted').length;
+  const nav = [
+    { id: 'overview', label: 'Overview', icon: LayoutDashboard },
+    { id: 'leads', label: 'Enquiries', icon: Inbox, count: newLeads },
+    { id: 'pages', label: 'Pages', icon: FileText },
+    { id: 'catalogue', label: 'Catalogue', icon: Package },
+    { id: 'chats', label: 'Assistant', icon: MessageSquare, count: data.chats.length },
+  ];
+  const stats = [
+    { label: 'Total enquiries', value: data.leads.length, icon: Inbox },
+    { label: 'New, awaiting reply', value: newLeads, icon: Bell, accent: true },
+    { label: 'Converted', value: converted, icon: CheckCircle2 },
+    { label: 'Assistant chats', value: data.chats.length, icon: MessageSquare },
+  ];
+
   return (
-    <main className="section">
-      <div className="site-container">
-        <div className="mb-8 flex items-center justify-between gap-4">
-          <div><div className="eyebrow">DASHBOARD</div><h1 className="section-title">Manage Bracon</h1></div>
-          <Button variant="outline" onClick={signOut}>Sign out</Button>
+    <div className="flex min-h-screen bg-muted">
+      <aside className="hidden w-60 shrink-0 flex-col bg-inverse text-inverse-foreground md:flex">
+        <div className="flex items-center gap-3 border-b border-inverse-foreground/10 p-5"><BrandMark /><div><strong className="block text-sm">Bracon</strong><small className="text-xs opacity-60">Admin console</small></div></div>
+        <nav className="flex-1 space-y-1 p-3">
+          {nav.map((n) => (
+            <button key={n.id} onClick={() => setTab(n.id)} className={`flex w-full items-center gap-3 rounded-md px-3 py-2.5 text-sm transition ${tab === n.id ? 'bg-primary text-primary-foreground' : 'opacity-75 hover:bg-inverse-foreground/10 hover:opacity-100'}`}>
+              <n.icon className="size-4" />{n.label}{!!n.count && <span className="ml-auto rounded-full bg-brand-orange px-2 text-xs text-primary-foreground">{n.count}</span>}
+            </button>
+          ))}
+        </nav>
+        <div className="space-y-1 border-t border-inverse-foreground/10 p-3">
+          <a href="/" className="flex items-center gap-3 rounded-md px-3 py-2 text-sm opacity-75 hover:opacity-100"><ExternalLink className="size-4" />View website</a>
+          <button onClick={signOut} className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm opacity-75 hover:opacity-100"><LogOut className="size-4" />Sign out</button>
         </div>
-        <Tabs defaultValue="leads">
-          <TabsList><TabsTrigger value="leads">Enquiries ({data.leads.length})</TabsTrigger><TabsTrigger value="pages">Pages</TabsTrigger><TabsTrigger value="catalogue">Catalogue</TabsTrigger><TabsTrigger value="chats">Assistant ({data.chats.length})</TabsTrigger></TabsList>
-          <TabsContent value="leads" className="mt-6 space-y-4">
-            {data.leads.length === 0 && <p className="text-muted-foreground">No enquiries yet.</p>}
-            {data.leads.map((l) => <Lead key={l.id} lead={l} />)}
-          </TabsContent>
-          <TabsContent value="pages" className="mt-6 space-y-4">
-            {PAGES.map((pg) => <PageEditor key={pg.key} pageKey={pg.key} label={pg.label} row={data.content.find((c) => c.key === pg.key)} />)}
-          </TabsContent>
-          <TabsContent value="catalogue" className="mt-6 space-y-4">
-            {products.map((p) => <ProductEditor key={p.slug} slug={p.slug} name={p.name} description={p.description} row={data.content.find((c) => c.key === `product:${p.slug}`)} />)}
-          </TabsContent>
-          <TabsContent value="chats" className="mt-6 space-y-4">
-            {data.chats.length === 0 && <p className="text-muted-foreground">No conversations yet.</p>}
-            {data.chats.map((c) => (
-              <details key={c.id} className="rounded-md border bg-card p-4">
-                <summary className="cursor-pointer font-semibold">Conversation · {new Date(c.updated_at).toLocaleString()}</summary>
-                <div className="mt-4 space-y-3">
-                  {(Array.isArray(c.messages) ? c.messages : []).map((m: any, i: number) => (
-                    <div key={i} className={m.role === 'user' ? 'rounded bg-muted p-3' : 'p-3'}>
-                      <div className="text-xs font-semibold uppercase text-muted-foreground">{m.role === 'user' ? 'Visitor' : 'Assistant'}</div>
-                      <p className="whitespace-pre-wrap text-sm">{(m.parts ?? []).filter((p: any) => p.type === 'text').map((p: any) => p.text).join('\n') || m.content}</p>
-                    </div>
-                  ))}
-                </div>
-              </details>
-            ))}
-          </TabsContent>
-        </Tabs>
+      </aside>
+      <div className="min-w-0 flex-1">
+        <header className="flex h-16 items-center justify-between border-b bg-background px-6">
+          <h1 className="text-lg font-bold">{nav.find((n) => n.id === tab)?.label}</h1>
+          <div className="flex items-center gap-2 md:hidden">
+            <select className="h-9 rounded-md border bg-background px-2 text-sm" value={tab} onChange={(e) => setTab(e.target.value)}>{nav.map((n) => <option key={n.id} value={n.id}>{n.label}</option>)}</select>
+            <Button size="sm" variant="outline" onClick={signOut}><LogOut /></Button>
+          </div>
+        </header>
+        <main className="space-y-4 p-6">
+          {tab === 'overview' && (
+            <>
+              <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+                {stats.map((s) => (
+                  <div key={s.label} className="rounded-lg border bg-background p-5">
+                    <div className="flex items-center justify-between text-sm text-muted-foreground">{s.label}<s.icon className={`size-5 ${s.accent ? 'text-brand-orange' : 'text-primary'}`} /></div>
+                    <div className="mt-3 text-3xl font-bold">{s.value}</div>
+                  </div>
+                ))}
+              </div>
+              <div className="rounded-lg border bg-background">
+                <div className="flex items-center justify-between border-b p-4"><strong>Latest enquiries</strong><Button size="sm" variant="link" onClick={() => setTab('leads')}>View all</Button></div>
+                {data.leads.length === 0 ? <p className="p-4 text-sm text-muted-foreground">No enquiries yet.</p> : (
+                  <table className="w-full text-sm">
+                    <thead className="text-left text-muted-foreground"><tr><th className="p-3">Name</th><th className="p-3">Type</th><th className="hidden p-3 sm:table-cell">Product</th><th className="p-3">Status</th><th className="hidden p-3 sm:table-cell">Date</th></tr></thead>
+                    <tbody>{data.leads.slice(0, 6).map((l) => <tr key={l.id} className="border-t"><td className="p-3 font-medium">{l.name}</td><td className="p-3 capitalize">{l.kind}</td><td className="hidden p-3 sm:table-cell">{l.product || '—'}</td><td className="p-3"><span className={`rounded-full px-2 py-0.5 text-xs ${l.status === 'New' ? 'bg-brand-orange text-primary-foreground' : 'bg-accent text-primary'}`}>{l.status}</span></td><td className="hidden p-3 sm:table-cell">{new Date(l.created_at).toLocaleDateString()}</td></tr>)}</tbody>
+                  </table>
+                )}
+              </div>
+            </>
+          )}
+          {tab === 'leads' && (data.leads.length === 0 ? <p className="text-muted-foreground">No enquiries yet.</p> : data.leads.map((l) => <Lead key={l.id} lead={l} />))}
+          {tab === 'pages' && PAGES.map((pg) => <PageEditor key={pg.key} pageKey={pg.key} label={pg.label} row={data.content.find((c) => c.key === pg.key)} />)}
+          {tab === 'catalogue' && products.map((p) => <ProductEditor key={p.slug} slug={p.slug} name={p.name} description={p.description} row={data.content.find((c) => c.key === `product:${p.slug}`)} />)}
+          {tab === 'chats' && (data.chats.length === 0 ? <p className="text-muted-foreground">No conversations yet.</p> : data.chats.map((c) => (
+            <details key={c.id} className="rounded-lg border bg-background p-4">
+              <summary className="cursor-pointer font-semibold">Conversation · {new Date(c.updated_at).toLocaleString()}</summary>
+              <div className="mt-4 space-y-3">
+                {(Array.isArray(c.messages) ? c.messages : []).map((m: any, i: number) => (
+                  <div key={i} className={m.role === 'user' ? 'rounded bg-muted p-3' : 'p-3'}>
+                    <div className="text-xs font-semibold uppercase text-muted-foreground">{m.role === 'user' ? 'Visitor' : 'Assistant'}</div>
+                    <p className="whitespace-pre-wrap text-sm">{(m.parts ?? []).filter((p: any) => p.type === 'text').map((p: any) => p.text).join('\n') || m.content}</p>
+                  </div>
+                ))}
+              </div>
+            </details>
+          )))}
+        </main>
       </div>
-    </main>
+    </div>
   );
 }
 
