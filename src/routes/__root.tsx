@@ -131,14 +131,15 @@ function RootComponent() {
     });
     return () => data.subscription.unsubscribe();
   }, [router, queryClient]);
+  const isAdmin = useRouterState({ select: (s) => s.location.pathname.startsWith("/admin") });
 
   return (
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <Header />
+      {!isAdmin && <Header />}
       <Outlet />
-      <Footer />
-      <Assistant />
+      {!isAdmin && <Footer />}
+      {!isAdmin && <Assistant />}
       <Toaster />
     </QueryClientProvider>
   );
