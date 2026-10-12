@@ -9,7 +9,8 @@ import { products } from '@/lib/site-data';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { LayoutDashboard, Inbox, FileText, Package, MessageSquare, Bell, CheckCircle2, ExternalLink, LogOut } from 'lucide-react';
+import { BrandMark } from '@/components/site';
 
 export const Route = createFileRoute('/_authenticated/admin')({
   head: () => ({
