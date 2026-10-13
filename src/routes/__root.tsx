@@ -14,6 +14,7 @@ import { useEffect, type ReactNode } from "react";
 import { Header, Footer } from "@/components/site";
 import { Assistant } from "@/components/assistant";
 import { Toaster } from "@/components/ui/sonner";
+import { Analytics } from "@/components/analytics";
 import { supabase } from "@/integrations/supabase/client";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
@@ -141,6 +142,7 @@ function RootComponent() {
       <Outlet />
       {!isAdmin && <Footer />}
       {!isAdmin && <Assistant />}
+      <Analytics />
       <Toaster />
     </QueryClientProvider>
   );
