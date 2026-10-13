@@ -15,6 +15,13 @@
       "when": 1791621010048,
       "tag": "0001_claim_first_admin",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1791878177798,
+      "tag": "0002_app_auth",
+      "breakpoints": true
     }
   ]
 }
