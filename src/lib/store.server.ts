@@ -4,7 +4,7 @@
 
 export type Enquiry = { id: string; name: string; email: string; phone: string | null; company: string | null; product: string | null; message: string; kind: string; contact: string | null; location: string | null; preferred_contact: string | null; status: string; notes: string; created_at: string };
 export type Content = { key: string; title: string; body: string; category: string; published: boolean; updated_at?: string };
-export type Chat = { id: string; messages: unknown; created_at: string; updated_at: string };
+export type Chat = { id: string; messages: any; created_at: string; updated_at: string };
 export type AppUser = { id: string; email: string; password_hash: string; role: 'admin' | 'staff' | 'pending'; created_at: string };
 
 export interface Store {
