@@ -7,4 +7,4 @@
 - [x] Logo + blue brand colours with orange touch
 - [x] Real admin dashboard look (sidebar, stats)
 - [x] Google Analytics
-- [ ] Self-hosting on Namecheap (own database, login, OpenAI) — needs decisions
+- [x] Self-hosting on Namecheap (MySQL, own login, OpenAI) — guide in selfhost/
