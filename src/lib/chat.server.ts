@@ -8,7 +8,8 @@ export async function handleChat(request:Request) {
  const origin=request.headers.get('origin');if(origin && origin!==new URL(request.url).origin) return Response.json({error:'Request not allowed.'},{status:403});
  const rawToken=request.headers.get('x-bracon-visitor'); const token=z.string().uuid().safeParse(rawToken);if(!token.success)return Response.json({error:'Please reopen the assistant.'},{status:400});
  const tokenHash=await hashToken(token.data);
- if(request.method==='GET') {const {data,error}=await supabaseAdmin.from('visitor_chats').select('messages').eq('token_hash',tokenHash).maybeSingle();if(error)return Response.json({error:'Conversation could not be loaded.'},{status:500});return Response.json({messages:data?.messages??[]});}
+ const store=await getStore();
+ if(request.method==='GET') {try{return Response.json({messages:(await store.getChat(tokenHash))??[]});}catch{return Response.json({error:'Conversation could not be loaded.'},{status:500});}}
   if(!(await store.rateLimit(`chat:${tokenHash}`,30,3600)))return Response.json({error:'Please wait before sending more messages, or contact our sales team.'},{status:429});
   const month=new Date().toISOString().slice(0,7);const monthlyCap=Number(process.env['CHAT_MONTHLY_LIMIT']??1000);
   if(!(await store.rateLimit(`chat-month:${month}`,monthlyCap,32*86400)))return Response.json({error:'Our assistant has reached its monthly limit. Please contact sales@braconwire.com or +2348050925884.'},{status:429});
