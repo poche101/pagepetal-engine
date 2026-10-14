@@ -1,7 +1,8 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { supabase } from '@/integrations/supabase/client';
+import { useServerFn } from '@tanstack/react-start';
+import { signIn, signUp } from '@/lib/auth.functions';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -28,22 +29,19 @@ function AuthPage() {
   const [password, setPassword] = useState('');
   const [busy, setBusy] = useState(false);
 
+  const doIn = useServerFn(signIn);
+  const doUp = useServerFn(signUp);
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setBusy(true);
-    if (mode === 'in') {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-      setBusy(false);
-      if (error) return toast.error(error.message);
+    try {
+      const r = mode === 'in' ? await doIn({ data: { email, password } }) : await doUp({ data: { email, password } });
+      if (r.role === 'pending') toast.message('Your account is waiting for an administrator to approve it.');
       navigate({ to: '/admin' });
-      return;
-    } else {
-      const { error } = await supabase.auth.signUp({ email, password, options: { emailRedirectTo: `${window.location.origin}/admin` } });
+    } catch (err) {
+      toast.error((err as Error).message);
+    } finally {
       setBusy(false);
-      if (error) return toast.error(error.message);
-      toast.success('Check your email to confirm your account, then sign in.');
-      setMode('in');
-      return;
     }
   }
 
