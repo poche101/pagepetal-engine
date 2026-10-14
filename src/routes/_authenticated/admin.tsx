@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useServerFn } from '@tanstack/react-start';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { toast } from 'sonner';
 import { getAdminData, saveContent, updateLead, setStaffRole } from '@/lib/site.functions';
 import { signOut as signOutFn } from '@/lib/auth.functions';
