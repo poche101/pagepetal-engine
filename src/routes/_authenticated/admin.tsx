@@ -3,13 +3,13 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useServerFn } from '@tanstack/react-start';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import { supabase } from '@/integrations/supabase/client';
-import { getAdminData, saveContent, updateLead } from '@/lib/site.functions';
+import { getAdminData, saveContent, updateLead, setStaffRole } from '@/lib/site.functions';
+import { signOut as signOutFn } from '@/lib/auth.functions';
 import { products } from '@/lib/site-data';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { LayoutDashboard, Inbox, FileText, Package, MessageSquare, Bell, CheckCircle2, ExternalLink, LogOut } from 'lucide-react';
+import { LayoutDashboard, Inbox, FileText, Package, MessageSquare, Bell, CheckCircle2, ExternalLink, LogOut, Users } from 'lucide-react';
 import { BrandMark } from '@/components/site';
 
 export const Route = createFileRoute('/_authenticated/admin')({
@@ -33,12 +33,11 @@ function Admin() {
   const navigate = useNavigate();
   const qc = useQueryClient();
   const fetchData = useServerFn(getAdminData);
-  const [claimed, setClaimed] = useState(false);
-  useEffect(() => { supabase.rpc('claim_first_admin').then(() => setClaimed(true)); }, []);
-  const { data, isLoading } = useQuery({ queryKey: ['admin'], queryFn: () => fetchData(), enabled: claimed });
+  const doSignOut = useServerFn(signOutFn);
+  const { data, isLoading } = useQuery({ queryKey: ['admin'], queryFn: () => fetchData() });
 
   async function signOut() {
-    await qc.cancelQueries(); qc.clear(); await supabase.auth.signOut(); navigate({ to: '/auth', replace: true });
+    await qc.cancelQueries(); qc.clear(); await doSignOut(); navigate({ to: '/auth', replace: true });
   }
 
   const [tab, setTab] = useState('overview');
@@ -53,6 +52,7 @@ function Admin() {
     { id: 'pages', label: 'Pages', icon: FileText },
     { id: 'catalogue', label: 'Catalogue', icon: Package },
     { id: 'chats', label: 'Assistant', icon: MessageSquare, count: data.chats.length },
+    ...(data.me.role === 'admin' ? [{ id: 'staff', label: 'Staff', icon: Users, count: data.users.filter((u) => u.role === 'pending').length }] : []),
   ];
   const stats = [
     { label: 'Total enquiries', value: data.leads.length, icon: Inbox },
@@ -110,6 +110,7 @@ function Admin() {
           {tab === 'leads' && (data.leads.length === 0 ? <p className="text-muted-foreground">No enquiries yet.</p> : data.leads.map((l) => <Lead key={l.id} lead={l} />))}
           {tab === 'pages' && PAGES.map((pg) => <PageEditor key={pg.key} pageKey={pg.key} label={pg.label} row={data.content.find((c) => c.key === pg.key)} />)}
           {tab === 'catalogue' && products.map((p) => <ProductEditor key={p.slug} slug={p.slug} name={p.name} description={p.description} row={data.content.find((c) => c.key === `product:${p.slug}`)} />)}
+          {tab === 'staff' && data.users.map((u) => <StaffRow key={u.id} user={u} self={u.id === data.me.id} />)}
           {tab === 'chats' && (data.chats.length === 0 ? <p className="text-muted-foreground">No conversations yet.</p> : data.chats.map((c) => (
             <details key={c.id} className="rounded-lg border bg-background p-4">
               <summary className="cursor-pointer font-semibold">Conversation · {new Date(c.updated_at).toLocaleString()}</summary>
@@ -184,6 +185,25 @@ function PageEditor({ pageKey, label, row }: { pageKey: string; label: string; r
       <Input placeholder="Heading (leave empty to keep the current one)" value={title} onChange={(e) => setTitle(e.target.value)} />
       <Textarea rows={6} placeholder="Page text (leave empty to keep the current text)" value={body} onChange={(e) => setBody(e.target.value)} />
       <div className="flex justify-end"><Button onClick={async () => { try { await save({ data: { key: pageKey, title: title || label, body, category: 'page', published: true } }); toast.success('Page updated'); qc.invalidateQueries(); } catch (e) { toast.error((e as Error).message); } }}>Save page</Button></div>
+    </div>
+  );
+}
+
+function StaffRow({ user, self }: { user: { id: string; email: string; role: string; created_at: string }; self: boolean }) {
+  const save = useServerFn(setStaffRole);
+  const qc = useQueryClient();
+  const [role, setRole] = useState(user.role);
+  return (
+    <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border bg-background p-4">
+      <div><strong>{user.email}</strong><p className="text-xs text-muted-foreground">Joined {new Date(user.created_at).toLocaleDateString()}</p></div>
+      {self ? <span className="text-sm text-muted-foreground">You (administrator)</span> : (
+        <div className="flex gap-2">
+          <select className="h-9 rounded-md border bg-background px-2 text-sm" value={role} onChange={(e) => setRole(e.target.value)}>
+            <option value="pending">Waiting for approval</option><option value="staff">Staff</option><option value="admin">Administrator</option>
+          </select>
+          <Button size="sm" onClick={async () => { try { await save({ data: { id: user.id, role: role as 'staff' } }); toast.success('Access updated'); qc.invalidateQueries({ queryKey: ['admin'] }); } catch (e) { toast.error((e as Error).message); } }}>Save</Button>
+        </div>
+      )}
     </div>
   );
 }
