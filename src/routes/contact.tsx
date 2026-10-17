@@ -36,7 +36,7 @@ function Page() {
             </div>
           </section>
         )}
-        <section className="section architectural">
+        <section className="section">
           <div className="site-container form-layout">
             <ContactDetails />
             <EnquiryForm />

@@ -40,11 +40,13 @@ export function BrandMark() {
 export function Brand() {
   return (
     <Link to="/" className="brand" aria-label="Bracon home">
-      <span className="brand-name">
-        <BrandMark />
-        bracon<span className="text-brand-orange">.</span>
+      <BrandMark />
+      <span className="brand-text">
+        <span className="brand-name">
+          bracon<span className="text-brand-orange">.</span>
+        </span>
+        <span className="brand-sub">WIRE & CABLE</span>
       </span>
-      <span className="brand-sub">WIRE & CABLE</span>
     </Link>
   );
 }
@@ -63,12 +65,15 @@ export function Header() {
         <div className="site-container">
           <span>Tested. Trusted. Durable. &nbsp; Since 1998.</span>
           <div className="flex items-center gap-6">
-            <a className="top-contact-email" href="mailto:sales@braconwire.com">
-              sales@braconwire.com
-            </a>
-            <a href="tel:+2348050925884" className="flex items-center gap-2">
-              <Phone size={10} /> +234 805 092 5884
-            </a>
+            <span className="top-contact-email flex items-center gap-3">
+              <a href="mailto:admin@braconwire.com">Admin@braconwire.com</a>
+              <a href="mailto:info@braconwire.com">Info@braconwire.com</a>
+            </span>
+            <span className="flex items-center gap-3">
+              <Phone size={10} />
+              <a href="tel:+2348091466825">08091466825</a>
+              <a href="tel:+2348033806324">+234 803 380 6324</a>
+            </span>
           </div>
         </div>
       </div>
@@ -171,8 +176,10 @@ export function Footer() {
                 <br />
                 Amje Alakuko, Nigeria.
               </p>
-              <a href="mailto:sales@braconwire.com">sales@braconwire.com</a>
-              <a href="tel:+2348050925884">+234 805 092 5884</a>
+              <a href="mailto:admin@braconwire.com">Admin@braconwire.com</a>
+              <a href="mailto:info@braconwire.com">Info@braconwire.com</a>
+              <a href="tel:+2348091466825">08091466825</a>
+              <a href="tel:+2348033806324">+234 803 380 6324</a>
             </div>
           </div>
           <div className="footer-bottom">
@@ -199,7 +206,7 @@ export function PageBanner({
   label?: string;
 }) {
   return (
-    <section className="page-banner architectural">
+    <section className="page-banner">
       <div className="site-container">
         <div className="breadcrumb">
           <Link to="/">Home</Link>
@@ -344,7 +351,7 @@ export function AboutSection({
 }
 export function ServiceSection() {
   return (
-    <section className="section architectural">
+    <section className="section">
       <div className="site-container">
         <div className="section-heading">
           <div>
@@ -437,18 +444,17 @@ export function ContactDetails() {
       <div className="contact-line">
         <Mail />
         <div>
-  <strong>Email our team</strong>
-  <a href="mailto:sales@braconwire.com">Info@braconwire.com
-  </a>
-  <a href="mailto:admin@braconwire.com">Admin@braconwire.com</a>
-</div>
+          <strong>Email our team</strong>
+          <a href="mailto:admin@braconwire.com">Admin@braconwire.com</a>
+          <a href="mailto:info@braconwire.com">Info@braconwire.com</a>
+        </div>
       </div>
       <div className="contact-line">
         <Phone />
         <div>
           <strong>Give us a call</strong>
-          <a href="tel:+2348050925884">+234 8091466825</a>
-          <a href="tel:+2348023016776">+234 8033806324</a>
+          <a href="tel:+2348091466825">08091466825</a>
+          <a href="tel:+2348033806324">+234 803 380 6324</a>
         </div>
       </div>
     </div>

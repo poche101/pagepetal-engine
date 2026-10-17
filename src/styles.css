@@ -75,7 +75,6 @@
 .section-heading { display:flex; justify-content:space-between; align-items:end; gap:30px; margin-bottom:33px; }
 .section-title { font-size:36px; line-height:1.22; font-weight:750; margin-top:16px; }
 .section-copy { max-width:390px; font-size:12px; line-height:1.9; color:var(--muted-foreground); margin-top:16px; }
-.architectural { background-color:var(--background); background-image:linear-gradient(oklch(0.997 0 0 / .93),oklch(0.997 0 0 / .96)),url("./assets/copper-cable.jpg"); background-size:cover; background-position:center; }
 .product-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:24px; }
 .product-card { border:1px solid var(--border); border-radius:6px; background:var(--background); overflow:hidden; transition:transform .25s,box-shadow .25s; }
 .product-card:hover { transform:translateY(-5px); box-shadow:var(--shadow-panel); }
@@ -123,3 +122,80 @@
  .chat-launcher { right:18px; bottom:18px; } .chat-launcher-label { display:none; } .chat-panel { right:12px; bottom:82px; width:calc(100% - 24px); height:calc(100svh - 110px); max-height:630px; }
 }
 @media(prefers-reduced-motion:reduce) { *,*:before,*:after { animation:none !important; transition:none !important; scroll-behavior:auto !important; } }
+
+.logo-bg {
+  background-color: var(--background);
+  background-image:
+    linear-gradient(oklch(0.997 0 0 / .93), oklch(0.997 0 0 / .96)),
+    url("/bracon-logo.jpeg");
+  background-repeat: no-repeat;
+  background-size: cover, cover;
+  background-position: center, center;
+}
+
+main {
+  background-color: var(--background);
+  background-image:
+    linear-gradient(oklch(0.997 0 0 / .93), oklch(0.997 0 0 / .96)),
+    url("/bracon-logo.jpeg");
+  background-repeat: no-repeat;
+  background-size: cover, cover;
+  background-position: center, center;
+  background-attachment: fixed, fixed;
+}
+
+.page-banner {
+  background: var(--background);
+}
+
+.page-banner {
+  background-color: var(--background);
+  background-image:
+    linear-gradient(oklch(0.997 0 0 / .93), oklch(0.997 0 0 / .96)),
+    url("./assets/copper-cable.jpg");
+  background-size: cover;
+  background-position: center;
+  background-attachment: scroll;
+}
+
+.brand { gap: 0; }
+.brand .brand-sub {
+  margin-top: -10px;
+  line-height: 1;
+}
+
+.brand {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+.brand .brand-sub {
+  margin-top: 0;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.brand .brand-text {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  gap: 0 !important;
+}
+.brand .brand-name {
+  display: block !important;
+  line-height: 0.95 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+.brand .brand-sub {
+  display: block !important;
+  margin: 3px 0 0 0 !important;
+  padding: 0 !important;
+  text-indent: 0 !important;
+  text-align: left !important;
+  position: static !important;
+  transform: none !important;
+  line-height: 1 !important;
+  white-space: nowrap;
+}
