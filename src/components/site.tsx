@@ -438,18 +438,17 @@ export function ContactDetails() {
         <Mail />
         <div>
   <strong>Email our team</strong>
-  <a href="mailto:sales@braconwire.com">sales@braconwire.com
-       &
+  <a href="mailto:sales@braconwire.com">Info@braconwire.com
   </a>
-  <a href="mailto:admin@braconwire.com">admin@braconwire.com</a>
+  <a href="mailto:admin@braconwire.com">Admin@braconwire.com</a>
 </div>
       </div>
       <div className="contact-line">
         <Phone />
         <div>
           <strong>Give us a call</strong>
-          <a href="tel:+2348050925884">+234 805 092 5884   &</a>
-          <a href="tel:+2348023016776">+234 802 301 6776</a>
+          <a href="tel:+2348050925884">+234 8091466825</a>
+          <a href="tel:+2348023016776">+234 8033806324</a>
         </div>
       </div>
     </div>
